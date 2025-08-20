@@ -29,6 +29,11 @@ tasks:
     silent: true
     cmd: go test ./... -cover -short
 
+  test:ci:
+    desc: Run the test suite for CI with coverage profile
+    silent: true
+    cmd: go test -v -race -coverprofile=coverage.out ./...
+
   tag:
     desc: Create and push a new signed tag for release
     prompt: This will create, sign, and push tag {{.TAG}}. Continue?
