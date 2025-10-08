@@ -7,16 +7,22 @@ import (
 	"github.com/pseudomuto/where"
 )
 
-func init() {
-	driver := NewClickHouseDriver()
-	where.RegisterDriver("clickhouse", driver)
-	where.RegisterDriver("ch", driver)
-}
-
+// ClickHouseDriver implements the where.Driver interface for ClickHouse databases.
 type ClickHouseDriver struct {
 	keywords map[string]bool
 }
 
+// NewClickHouseDriver creates a new ClickHouse driver instance.
+//
+// Example:
+//
+//	import (
+//		"github.com/pseudomuto/where"
+//		_ "github.com/pseudomuto/where/drivers/clickhouse"
+//	)
+//
+//	filter, params, _ := where.Build("age > 18", "clickhouse")
+//	// SELECT * FROM users WHERE age > ?
 func NewClickHouseDriver() *ClickHouseDriver {
 	return &ClickHouseDriver{
 		keywords: ClickHouseKeywords,
@@ -146,13 +152,13 @@ func (d *ClickHouseDriver) TranslateFunction(name string, argCount int) (string,
 		}
 	case "COALESCE", "GREATEST", "LEAST":
 		placeholders := make([]string, argCount)
-		for i := 0; i < argCount; i++ {
+		for i := range argCount {
 			placeholders[i] = "%s"
 		}
 		return strings.ToLower(upperName) + "(" + strings.Join(placeholders, ", ") + ")", true
 	case "CONCAT":
 		placeholders := make([]string, argCount)
-		for i := 0; i < argCount; i++ {
+		for i := range argCount {
 			placeholders[i] = "%s"
 		}
 		return "concat(" + strings.Join(placeholders, ", ") + ")", true
@@ -163,13 +169,13 @@ func (d *ClickHouseDriver) TranslateFunction(name string, argCount int) (string,
 		return "", false
 	case "ARRAY":
 		placeholders := make([]string, argCount)
-		for i := 0; i < argCount; i++ {
+		for i := range argCount {
 			placeholders[i] = "%s"
 		}
 		return "[" + strings.Join(placeholders, ", ") + "]", true
 	case "TUPLE":
 		placeholders := make([]string, argCount)
-		for i := 0; i < argCount; i++ {
+		for i := range argCount {
 			placeholders[i] = "%s"
 		}
 		return "(" + strings.Join(placeholders, ", ") + ")", true
@@ -365,7 +371,7 @@ func (d *ClickHouseDriver) translateEncodingFunctions(name string, argCount int)
 // buildPlaceholders creates a comma-separated list of %s placeholders
 func (d *ClickHouseDriver) buildPlaceholders(count int) string {
 	placeholders := make([]string, count)
-	for i := 0; i < count; i++ {
+	for i := range count {
 		placeholders[i] = "%s"
 	}
 	return strings.Join(placeholders, ", ")
@@ -384,4 +390,10 @@ func (d *ClickHouseDriver) SupportsFeature(feature string) bool {
 	default:
 		return false
 	}
+}
+
+func init() {
+	driver := NewClickHouseDriver()
+	where.RegisterDriver("clickhouse", driver)
+	where.RegisterDriver("ch", driver)
 }

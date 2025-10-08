@@ -46,10 +46,10 @@ func RegisterDriver(name string, driver Driver) {
 	defer driversMu.Unlock()
 
 	if driver == nil {
-		panic("pfilter: RegisterDriver driver is nil")
+		panic("where: RegisterDriver driver is nil")
 	}
 	if name == "" {
-		panic("pfilter: RegisterDriver name is empty")
+		panic("where: RegisterDriver name is empty")
 	}
 
 	drivers[name] = driver

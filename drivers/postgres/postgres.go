@@ -7,17 +7,22 @@ import (
 	"github.com/pseudomuto/where"
 )
 
-func init() {
-	driver := NewPostgreSQLDriver()
-	where.RegisterDriver("postgres", driver)
-	where.RegisterDriver("postgresql", driver)
-	where.RegisterDriver("pg", driver)
-}
-
+// PostgreSQLDriver implements the where.Driver interface for PostgreSQL databases.
 type PostgreSQLDriver struct {
 	keywords map[string]bool
 }
 
+// NewPostgreSQLDriver creates a new PostgreSQL driver instance.
+//
+// Example:
+//
+//	import (
+//		"github.com/pseudomuto/where"
+//		_ "github.com/pseudomuto/where/drivers/postgres"
+//	)
+//
+//	filter, params, _ := where.Build("age > 18", "postgres")
+//	// SELECT * FROM users WHERE age > $1
 func NewPostgreSQLDriver() *PostgreSQLDriver {
 	return &PostgreSQLDriver{
 		keywords: PostgreSQLKeywords,
@@ -626,7 +631,7 @@ func (d *PostgreSQLDriver) translateAggregateFunctions(name string, argCount int
 // buildPlaceholders creates a comma-separated list of %s placeholders
 func (d *PostgreSQLDriver) buildPlaceholders(count int) string {
 	placeholders := make([]string, count)
-	for i := 0; i < count; i++ {
+	for i := range count {
 		placeholders[i] = "%s"
 	}
 	return strings.Join(placeholders, ", ")
@@ -643,4 +648,11 @@ func (d *PostgreSQLDriver) SupportsFeature(feature string) bool {
 	default:
 		return false
 	}
+}
+
+func init() {
+	driver := NewPostgreSQLDriver()
+	where.RegisterDriver("postgres", driver)
+	where.RegisterDriver("postgresql", driver)
+	where.RegisterDriver("pg", driver)
 }

@@ -7,16 +7,22 @@ import (
 	"github.com/pseudomuto/where"
 )
 
-func init() {
-	driver := NewMySQLDriver()
-	where.RegisterDriver("mysql", driver)
-	where.RegisterDriver("mariadb", driver)
-}
-
+// MySQLDriver implements the where.Driver interface for MySQL and MariaDB databases.
 type MySQLDriver struct {
 	keywords map[string]bool
 }
 
+// NewMySQLDriver creates a new MySQL driver instance.
+//
+// Example:
+//
+//	import (
+//		"github.com/pseudomuto/where"
+//		_ "github.com/pseudomuto/where/drivers/mysql"
+//	)
+//
+//	filter, params, _ := where.Build("age > 18", "mysql")
+//	// SELECT * FROM users WHERE age > ?
 func NewMySQLDriver() *MySQLDriver {
 	return &MySQLDriver{
 		keywords: MySQLKeywords,
@@ -421,7 +427,7 @@ func (d *MySQLDriver) translateAggregateFunctions(name string, argCount int) (st
 // buildPlaceholders creates a comma-separated list of %s placeholders
 func (d *MySQLDriver) buildPlaceholders(count int) string {
 	placeholders := make([]string, count)
-	for i := 0; i < count; i++ {
+	for i := range count {
 		placeholders[i] = "%s"
 	}
 	return strings.Join(placeholders, ", ")
@@ -440,4 +446,10 @@ func (d *MySQLDriver) SupportsFeature(feature string) bool {
 	default:
 		return false
 	}
+}
+
+func init() {
+	driver := NewMySQLDriver()
+	where.RegisterDriver("mysql", driver)
+	where.RegisterDriver("mariadb", driver)
 }
