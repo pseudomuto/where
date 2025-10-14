@@ -221,7 +221,7 @@ func (d *ClickHouseDriver) translateCaseSensitiveFunction(name string, argCount 
 func (d *ClickHouseDriver) translateDateTimeFunctions(name string, argCount int) (string, bool) {
 	switch name {
 	case "toDate", "toDateTime", "toDateTime64":
-		if argCount == 1 || argCount == 2 {
+		if argCount > 0 && argCount < 4 {
 			return name + "(" + d.buildPlaceholders(argCount) + ")", true
 		}
 	case "toYYYYMM", "toYYYYMMDD", "toYYYYMMDDhhmmss":
