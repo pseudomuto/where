@@ -1,6 +1,7 @@
 package where
 
 import (
+	"strings"
 	"sync"
 
 	"github.com/pkg/errors"
@@ -25,8 +26,8 @@ type (
 		// Placeholder returns the placeholder syntax for the given parameter position.
 		Placeholder(position int) string
 
-		// IsReservedKeyword returns true if the word is a reserved keyword in this database.
-		IsReservedKeyword(word string) bool
+		// Keywords returns the list of reserved keywords for this database.
+		Keywords() []string
 
 		// TranslateOperator translates an operator to database-specific syntax.
 		TranslateOperator(op string) (translated string, supported bool)
@@ -77,10 +78,25 @@ func ListDrivers() []string {
 	return names
 }
 
+// IsReservedKeyword determines if a word is a reserved keyword for the given driver.
+// This implements the common keyword checking logic used across all database drivers.
+func IsReservedKeyword(word string, driver Driver) bool {
+	upperWord := strings.ToUpper(word)
+	keywords := driver.Keywords()
+
+	for _, keyword := range keywords {
+		if upperWord == keyword {
+			return true
+		}
+	}
+
+	return false
+}
+
 // NeedsQuoting determines if an identifier needs to be quoted.
 // This implements the common SQL identifier quoting rules used across all database drivers.
 func NeedsQuoting(name string, driver Driver) bool {
-	if driver.IsReservedKeyword(name) {
+	if IsReservedKeyword(name, driver) {
 		return true
 	}
 

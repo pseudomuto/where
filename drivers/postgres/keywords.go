@@ -1,31 +1,23 @@
 package postgres
 
-var PostgreSQLKeywords = map[string]bool{
-	"ALL": true, "ANALYSE": true, "ANALYZE": true, "AND": true, "ANY": true,
-	"ARRAY": true, "AS": true, "ASC": true, "ASYMMETRIC": true, "AUTHORIZATION": true,
-	"BETWEEN": true, "BINARY": true, "BOTH": true, "CASE": true, "CAST": true,
-	"CHECK": true, "COLLATE": true, "COLLATION": true, "COLUMN": true, "CONCURRENTLY": true,
-	"CONSTRAINT": true, "CREATE": true, "CROSS": true, "CURRENT_CATALOG": true,
-	"CURRENT_DATE": true, "CURRENT_ROLE": true, "CURRENT_SCHEMA": true,
-	"CURRENT_TIME": true, "CURRENT_TIMESTAMP": true, "CURRENT_USER": true,
-	"DATE": true, "DAY": true, "DEFAULT": true, "DEFERRABLE": true, "DESC": true,
-	"DISTINCT": true, "DO": true, "ELSE": true, "END": true, "EXCEPT": true,
-	"EXCLUDE": true, "EXISTS": true, "FALSE": true, "FETCH": true, "FILTER": true,
-	"FOR": true, "FOREIGN": true, "FROM": true, "FULL": true, "GRANT": true,
-	"GROUP": true, "GROUPS": true, "HAVING": true, "HOUR": true, "IF": true,
-	"ILIKE": true, "IN": true, "INDEX": true, "INITIALLY": true, "INNER": true,
-	"INOUT": true, "INTERSECT": true, "INTERVAL": true, "INTO": true, "IS": true,
-	"ISNULL": true, "JOIN": true, "LATERAL": true, "LEADING": true, "LEFT": true,
-	"LIKE": true, "LIMIT": true, "LOCAL": true, "LOCALTIME": true, "LOCALTIMESTAMP": true,
-	"MINUTE": true, "MONTH": true, "NATURAL": true, "NOT": true, "NOTNULL": true,
-	"NULL": true, "OFFSET": true, "ON": true, "ONLY": true, "OR": true,
-	"ORDER": true, "OUT": true, "OUTER": true, "OVERLAPS": true, "PARTITION": true,
-	"PLACING": true, "PRIMARY": true, "RANGE": true, "RANK": true, "REFERENCES": true,
-	"RETURNING": true, "RIGHT": true, "ROW": true, "ROWS": true, "SECOND": true,
-	"SELECT": true, "SESSION_USER": true, "SIMILAR": true, "SOME": true,
-	"SYMMETRIC": true, "TABLE": true, "TABLESAMPLE": true, "THEN": true,
-	"TIME": true, "TIMESTAMP": true, "TO": true, "TRAILING": true, "TRUE": true,
-	"UNION": true, "UNIQUE": true, "USER": true, "USING": true, "VALUES": true,
-	"VARIADIC": true, "VERBOSE": true, "WHEN": true, "WHERE": true, "WINDOW": true,
-	"WITH": true, "WITHIN": true, "WITHOUT": true, "YEAR": true, "ZONE": true,
+// PostgreSQL 16 reserved keywords that MUST be quoted when used as identifiers.
+// Source: https://www.postgresql.org/docs/16/sql-keywords-appendix.html (reserved keywords only)
+// Updated: January 2025
+//
+// This list includes only reserved keywords (marked as "reserved" in the PostgreSQL documentation)
+// which cannot be used as identifiers without quoting.
+var keywords = []string{
+	"ALL", "ANALYSE", "ANALYZE", "AND", "ANY", "ARRAY", "AS", "ASC", "ASYMMETRIC",
+	"AUTHORIZATION", "BETWEEN", "BINARY", "BOTH", "CASE", "CAST", "CHECK", "COLLATE",
+	"COLLATION", "COLUMN", "CONCURRENTLY", "CONSTRAINT", "CREATE", "CROSS",
+	"CURRENT_CATALOG", "CURRENT_DATE", "CURRENT_ROLE", "CURRENT_SCHEMA", "CURRENT_TIME",
+	"CURRENT_TIMESTAMP", "CURRENT_USER", "DEFAULT", "DEFERRABLE", "DESC", "DISTINCT",
+	"DO", "ELSE", "END", "EXCEPT", "FALSE", "FETCH", "FOR", "FOREIGN", "FROM",
+	"GRANT", "GROUP", "HAVING", "IN", "INITIALLY", "INNER", "INTERSECT", "INTO",
+	"IS", "JOIN", "LATERAL", "LEADING", "LEFT", "LIKE", "LIMIT", "LOCALTIME",
+	"LOCALTIMESTAMP", "NATURAL", "NOT", "NULL", "OFFSET", "ON", "ONLY", "OR",
+	"ORDER", "OUTER", "OVERLAPS", "PLACING", "PRIMARY", "REFERENCES", "RETURNING",
+	"RIGHT", "SELECT", "SESSION_USER", "SIMILAR", "SOME", "SYMMETRIC", "TABLE",
+	"TABLESAMPLE", "THEN", "TO", "TRAILING", "TRUE", "UNION", "UNIQUE", "USER",
+	"USING", "VARIADIC", "VERBOSE", "WHEN", "WHERE", "WINDOW", "WITH",
 }
