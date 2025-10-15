@@ -8,17 +8,27 @@ import (
 	"github.com/pseudomuto/where"
 )
 
-var supportsFeatures = []string{
-	"ARRAY",
-	"FINAL",
-	"GLOBAL",
-	"ILIKE",
-	"JSON",
-	"PREWHERE",
-	"SAMPLE",
-	"TUPLE",
-	"WITH",
-}
+var (
+	supportedFeatures = []string{
+		"ARRAY",
+		"FINAL",
+		"GLOBAL",
+		"ILIKE",
+		"JSON",
+		"PREWHERE",
+		"SAMPLE",
+		"TUPLE",
+		"WITH",
+	}
+
+	supportedOperations = []string{
+		"=", "!=", "<>", "<", ">", "<=", ">=",
+		"LIKE", "NOT LIKE", "ILIKE", "NOT ILIKE",
+		"IN", "NOT IN",
+		"IS NULL", "IS NOT NULL",
+		"BETWEEN", "NOT BETWEEN",
+	}
+)
 
 type (
 	// ClickHouseDriver implements the where.Driver interface for ClickHouse databases.
@@ -87,24 +97,15 @@ func (d *ClickHouseDriver) Keywords() []string {
 
 func (d *ClickHouseDriver) TranslateOperator(op string) (string, bool) {
 	upperOp := strings.ToUpper(op)
-	switch upperOp {
-	case "=", "!=", "<>", "<", ">", "<=", ">=":
-		return op, true
-	case "LIKE", "NOT LIKE", "ILIKE", "NOT ILIKE":
+	if slices.Contains(supportedOperations, upperOp) {
 		return upperOp, true
-	case "IN", "NOT IN":
-		return upperOp, true
-	case "IS NULL", "IS NOT NULL":
-		return upperOp, true
-	case "BETWEEN", "NOT BETWEEN":
-		return upperOp, true
-	default:
-		return "", false
 	}
+
+	return "", false
 }
 
 func (d *ClickHouseDriver) SupportsFeature(feature string) bool {
-	return slices.Contains(supportsFeatures, strings.ToUpper(feature))
+	return slices.Contains(supportedFeatures, strings.ToUpper(feature))
 }
 
 func init() {
