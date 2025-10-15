@@ -217,7 +217,7 @@ func ExampleParse_functions() {
 	//   Params: []
 	//
 	// Substring:
-	//   SQL: SUBSTRING(description FROM $1 FOR $2) = $3
+	//   SQL: SUBSTRING(description, $1, $2) = $3
 	//   Params: [1 10 Important]
 }
 
@@ -328,7 +328,7 @@ func ExampleParse_crossDatabaseFunctions() {
 
 	// Output:
 	// Date functions across databases:
-	// postgres: (created_at >= $1 AND EXTRACT(YEAR FROM created_at) = $2 AND EXTRACT(MONTH FROM created_at) IN ($3, $4, $5))
+	// postgres: (created_at >= $1 AND YEAR(created_at) = $2 AND MONTH(created_at) IN ($3, $4, $5))
 	//   Params: [2024-01-01 2024 1 2 3]
 	// mysql: (created_at >= ? AND YEAR(created_at) = ? AND MONTH(created_at) IN (?, ?, ?))
 	//   Params: [2024-01-01 2024 1 2 3]

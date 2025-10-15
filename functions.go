@@ -30,7 +30,7 @@ type (
 )
 
 // StandardFunctions contains metadata for commonly supported SQL functions.
-// This is used for function validation and argument count checking.
+// This is optional documentation - all functions are supported by default regardless of this list.
 var StandardFunctions = map[string]FunctionDef{
 	"LOWER": {
 		Name:        "LOWER",
@@ -259,14 +259,16 @@ var StandardFunctions = map[string]FunctionDef{
 }
 
 // GetFunctionDef retrieves the function definition for the given function name.
-// Function names are case-insensitive. Returns false if the function is not found.
+// Function names are case-insensitive. Returns false if the function is not in StandardFunctions.
+// Note: All functions are supported by default - this is only for documentation purposes.
 func GetFunctionDef(name string) (FunctionDef, bool) {
 	def, ok := StandardFunctions[strings.ToUpper(name)]
 	return def, ok
 }
 
 // ValidateFunctionArgs validates that the given argument count is valid for the function.
-// Returns true if the argument count is within the allowed range for the function.
+// Returns true if the argument count is within the allowed range for functions in StandardFunctions.
+// Note: This is optional validation - all functions are supported by default regardless of arity.
 func ValidateFunctionArgs(name string, argCount int) bool {
 	def, ok := GetFunctionDef(name)
 	if !ok {

@@ -37,7 +37,7 @@ func TestPostgreSQLDateTimeFunctions(t *testing.T) {
 		{
 			name:           "EXTRACT function",
 			expression:     "EXTRACT('year', created_at) = 2024",
-			expectedSQL:    "EXTRACT($1 FROM created_at) = $2",
+			expectedSQL:    "EXTRACT($1, created_at) = $2",
 			expectedParams: []any{"year", float64(2024)},
 		},
 		{
@@ -79,7 +79,7 @@ func TestPostgreSQLStringFunctions(t *testing.T) {
 		{
 			name:           "SUBSTRING function",
 			expression:     "SUBSTRING(description, 1, 10) = 'Important'",
-			expectedSQL:    "SUBSTRING(description FROM $1 FOR $2) = $3",
+			expectedSQL:    "SUBSTRING(description, $1, $2) = $3",
 			expectedParams: []any{float64(1), float64(10), "Important"},
 		},
 		{

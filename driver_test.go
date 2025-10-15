@@ -18,11 +18,7 @@ func (m *MockDriver) QuoteIdentifier(name string) string         { return "[" + 
 func (m *MockDriver) Placeholder(position int) string            { return "?" }
 func (m *MockDriver) IsReservedKeyword(word string) bool         { return word == "select" }
 func (m *MockDriver) TranslateOperator(op string) (string, bool) { return op, true }
-func (m *MockDriver) TranslateFunction(name string, argCount int) (string, bool) {
-	return name + "()", true
-}
-func (m *MockDriver) ConcatOperator() string              { return "+" }
-func (m *MockDriver) SupportsFeature(feature string) bool { return true }
+func (m *MockDriver) SupportsFeature(feature string) bool        { return true }
 
 func TestDriverRegistry(t *testing.T) {
 	// Create a mock driver for testing

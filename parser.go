@@ -41,6 +41,8 @@ func WithMaxINItems(max int) ParserOption {
 }
 
 // WithFunctions returns a ParserOption that restricts which functions are allowed in expressions.
+// This provides parse-time validation - note that all functions are supported at the driver level.
+// Use the Validator for runtime validation instead for more comprehensive security.
 func WithFunctions(names ...string) ParserOption {
 	return func(o *parserOptions) {
 		if o.allowedFuncs == nil {
