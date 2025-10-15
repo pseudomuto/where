@@ -8,13 +8,23 @@ import (
 	"github.com/pseudomuto/where"
 )
 
-var supportedFeatures = []string{
-	"CTE",
-	"FULLTEXT",
-	"JSON",
-	"PARTITION",
-	"SPATIAL",
-}
+var (
+	supportedFeatures = []string{
+		"CTE",
+		"FULLTEXT",
+		"JSON",
+		"PARTITION",
+		"SPATIAL",
+	}
+
+	supportedOperations = []string{
+		"=", "!=", "<>", "<", ">", "<=", ">=",
+		"LIKE", "NOT LIKE",
+		"IN", "NOT IN",
+		"IS NULL", "IS NOT NULL",
+		"BETWEEN", "NOT BETWEEN",
+	}
+)
 
 type (
 	// MySQLDriver implements the where.Driver interface for MySQL and MariaDB databases.
@@ -83,24 +93,15 @@ func (d *MySQLDriver) Keywords() []string {
 
 func (d *MySQLDriver) TranslateOperator(op string) (string, bool) {
 	upperOp := strings.ToUpper(op)
-	switch upperOp {
-	case "=", "!=", "<>", "<", ">", "<=", ">=":
-		return op, true
-	case "LIKE", "NOT LIKE":
+	if slices.Contains(supportedOperations, upperOp) {
 		return upperOp, true
-	case "ILIKE":
-		return "LIKE", true
-	case "NOT ILIKE":
-		return "NOT LIKE", true
-	case "IN", "NOT IN":
-		return upperOp, true
-	case "IS NULL", "IS NOT NULL":
-		return upperOp, true
-	case "BETWEEN", "NOT BETWEEN":
-		return upperOp, true
-	default:
-		return "", false
 	}
+
+	if upperOp == "ILIKE" || upperOp == "NOT ILIKE" {
+		return strings.Replace(upperOp, "ILIKE", "LIKE", 1), true
+	}
+
+	return "", false
 }
 
 func (d *MySQLDriver) SupportsFeature(feature string) bool {
