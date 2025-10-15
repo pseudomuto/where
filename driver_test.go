@@ -16,7 +16,7 @@ type MockDriver struct {
 func (m *MockDriver) Name() string                               { return m.name }
 func (m *MockDriver) QuoteIdentifier(name string) string         { return "[" + name + "]" }
 func (m *MockDriver) Placeholder(position int) string            { return "?" }
-func (m *MockDriver) IsReservedKeyword(word string) bool         { return word == "select" }
+func (m *MockDriver) Keywords() []string                         { return []string{"SELECT"} }
 func (m *MockDriver) TranslateOperator(op string) (string, bool) { return op, true }
 func (m *MockDriver) SupportsFeature(feature string) bool        { return true }
 

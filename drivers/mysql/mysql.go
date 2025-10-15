@@ -18,9 +18,7 @@ var supportedFeatures = []string{
 
 type (
 	// MySQLDriver implements the where.Driver interface for MySQL and MariaDB databases.
-	MySQLDriver struct {
-		keywords map[string]bool
-	}
+	MySQLDriver struct{}
 )
 
 // NewMySQLDriver creates a new MySQL driver instance.
@@ -35,9 +33,7 @@ type (
 //	filter, params, _ := where.Build("age > 18", "mysql")
 //	// SELECT * FROM users WHERE age > ?
 func NewMySQLDriver() *MySQLDriver {
-	return &MySQLDriver{
-		keywords: MySQLKeywords,
-	}
+	return &MySQLDriver{}
 }
 
 func (d *MySQLDriver) Name() string {
@@ -81,8 +77,8 @@ func (d *MySQLDriver) Placeholder(position int) string {
 	return "?"
 }
 
-func (d *MySQLDriver) IsReservedKeyword(word string) bool {
-	return d.keywords[strings.ToUpper(word)]
+func (d *MySQLDriver) Keywords() []string {
+	return keywords
 }
 
 func (d *MySQLDriver) TranslateOperator(op string) (string, bool) {

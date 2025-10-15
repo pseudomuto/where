@@ -20,9 +20,7 @@ var supportedFeatures = []string{
 
 type (
 	// PostgreSQLDriver implements the where.Driver interface for PostgreSQL databases.
-	PostgreSQLDriver struct {
-		keywords map[string]bool
-	}
+	PostgreSQLDriver struct{}
 )
 
 // NewPostgreSQLDriver creates a new PostgreSQL driver instance.
@@ -37,9 +35,7 @@ type (
 //	filter, params, _ := where.Build("age > 18", "postgres")
 //	// SELECT * FROM users WHERE age > $1
 func NewPostgreSQLDriver() *PostgreSQLDriver {
-	return &PostgreSQLDriver{
-		keywords: PostgreSQLKeywords,
-	}
+	return &PostgreSQLDriver{}
 }
 
 func (d *PostgreSQLDriver) Name() string {
@@ -83,8 +79,8 @@ func (d *PostgreSQLDriver) Placeholder(position int) string {
 	return fmt.Sprintf("$%d", position)
 }
 
-func (d *PostgreSQLDriver) IsReservedKeyword(word string) bool {
-	return d.keywords[strings.ToUpper(word)]
+func (d *PostgreSQLDriver) Keywords() []string {
+	return keywords
 }
 
 func (d *PostgreSQLDriver) TranslateOperator(op string) (string, bool) {

@@ -22,9 +22,7 @@ var supportsFeatures = []string{
 
 type (
 	// ClickHouseDriver implements the where.Driver interface for ClickHouse databases.
-	ClickHouseDriver struct {
-		keywords map[string]bool
-	}
+	ClickHouseDriver struct{}
 )
 
 // NewClickHouseDriver creates a new ClickHouse driver instance.
@@ -39,9 +37,7 @@ type (
 //	filter, params, _ := where.Build("age > 18", "clickhouse")
 //	// SELECT * FROM users WHERE age > ?
 func NewClickHouseDriver() *ClickHouseDriver {
-	return &ClickHouseDriver{
-		keywords: ClickHouseKeywords,
-	}
+	return &ClickHouseDriver{}
 }
 
 func (d *ClickHouseDriver) Name() string {
@@ -85,8 +81,8 @@ func (d *ClickHouseDriver) Placeholder(position int) string {
 	return "?"
 }
 
-func (d *ClickHouseDriver) IsReservedKeyword(word string) bool {
-	return d.keywords[strings.ToUpper(word)]
+func (d *ClickHouseDriver) Keywords() []string {
+	return keywords
 }
 
 func (d *ClickHouseDriver) TranslateOperator(op string) (string, bool) {
