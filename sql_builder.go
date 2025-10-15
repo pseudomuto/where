@@ -277,10 +277,16 @@ func (b *SQLBuilder) buildFunctionCall(fn *FunctionCall) (string, error) {
 		return "", fmt.Errorf("function %q is not allowed", fn.Name)
 	}
 
-	template, supported := b.driver.TranslateFunction(fn.Name, len(fn.Args))
-	if !supported {
-		return "", fmt.Errorf("function %q with %d arguments not supported by driver %s",
-			fn.Name, len(fn.Args), b.driver.Name())
+	// Build template directly without driver involvement
+	var template string
+	if len(fn.Args) == 0 {
+		template = fn.Name + "()"
+	} else {
+		placeholders := make([]string, len(fn.Args))
+		for i := range len(fn.Args) {
+			placeholders[i] = "%s"
+		}
+		template = fn.Name + "(" + strings.Join(placeholders, ", ") + ")"
 	}
 
 	if len(fn.Args) == 0 {

@@ -64,19 +64,19 @@ fmt.Printf("Params: %v\n", params) // [18 active]
 
 ### PostgreSQL (`postgres`, `postgresql`, `pg`)
 - **Features**: Native ILIKE support, JSONB path extraction, array functions
-- **Functions**: 70+ including DATE_TRUNC, EXTRACT, ARRAY_LENGTH, JSONB_EXTRACT_PATH
+- **Functions**: All PostgreSQL functions supported (e.g., DATE_TRUNC, EXTRACT, ARRAY_LENGTH, JSONB_EXTRACT_PATH)
 - **Placeholders**: `$1`, `$2`, `$3`...
 - **Identifiers**: Double quotes (`"field"`)
 
 ### MySQL (`mysql`)
 - **Features**: ILIKE converted to LOWER() + LIKE, comprehensive date/time functions
-- **Functions**: 60+ including DATE_FORMAT, TIMESTAMPDIFF, JSON_EXTRACT
+- **Functions**: All MySQL functions supported (e.g., DATE_FORMAT, TIMESTAMPDIFF, JSON_EXTRACT)
 - **Placeholders**: `?`
 - **Identifiers**: Backticks (`` `field` ``)
 
 ### ClickHouse (`clickhouse`)
 - **Features**: Case-sensitive functions, array operations, time-series optimized
-- **Functions**: 60+ including toYYYYMM, arrayLength, startsWith (case-sensitive)
+- **Functions**: All ClickHouse functions supported (e.g., toYYYYMM, arrayLength, startsWith)
 - **Placeholders**: `?`
 - **Identifiers**: Backticks (`` `field` ``)
 
@@ -102,13 +102,20 @@ fmt.Printf("Params: %v\n", params) // [18 active]
 parser, err := where.NewParser(
     where.WithMaxDepth(3),              // Limit nesting depth
     where.WithMaxINItems(10),           // Limit IN clause items
-    where.WithFunctions("LOWER", "UPPER"), // Allow specific functions
+    where.WithFunctions("LOWER", "UPPER"), // Restrict at parse-time (optional)
 )
 
 filter, err := parser.Parse("LOWER(email) = 'admin@example.com'")
 ```
 
-### Field and Function Validation
+### Function Validation
+
+There are two levels of function validation available:
+
+1. **Parse-time validation** (optional): Restrict functions during parsing
+2. **Runtime validation** (recommended): Use Validator for comprehensive security
+
+### Field and Function Allowlists
 
 ```go
 // Create validator with allowlists
@@ -171,7 +178,24 @@ chFilter, _ := where.Parse(`
     toYYYYMM(event_time) = 202401 AND
     has(categories, 'analytics') = true
 `)
+
+// Any function with any number of arguments is supported
+customFilter, _ := where.Parse(`
+    toDateTime64(timestamp, 3, 'UTC') > '2024-01-01' AND
+    MY_CUSTOM_FUNCTION(a, b, c, d, e) = 42
+`)
 ```
+
+### Universal Function Support
+
+Where supports **all functions** available in your target database without requiring pre-configuration:
+
+- **No function whitelists** - Any function your database supports can be used
+- **Variable arity support** - Functions can accept any number of arguments (e.g., `toDateTime64(value, precision, timezone)`)
+- **Database-native syntax** - Functions are passed through directly to the database for validation
+- **Custom functions** - User-defined functions work immediately without code changes
+
+Function validation happens at **database execution time** rather than parse time, providing maximum flexibility while maintaining safety through parameterization.
 
 ## Security Features
 

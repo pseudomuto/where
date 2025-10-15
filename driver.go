@@ -12,7 +12,8 @@ var (
 )
 
 // Driver interface defines the contract for database-specific implementations.
-// Each database driver handles SQL dialect differences, keyword quoting, placeholders, and function translations.
+// Each database driver handles SQL dialect differences, keyword quoting, and placeholders.
+// Functions are handled generically by the SQL builder without driver-specific translation.
 type Driver interface {
 	// Name returns the driver name (e.g., "postgres", "mysql", "clickhouse").
 	Name() string
@@ -28,12 +29,6 @@ type Driver interface {
 
 	// TranslateOperator translates an operator to database-specific syntax.
 	TranslateOperator(op string) (translated string, supported bool)
-
-	// TranslateFunction translates a function call to database-specific syntax.
-	TranslateFunction(name string, argCount int) (template string, supported bool)
-
-	// ConcatOperator returns the string concatenation operator for this database.
-	ConcatOperator() string
 
 	// SupportsFeature returns true if the database supports the named feature.
 	SupportsFeature(feature string) bool
