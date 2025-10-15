@@ -2,15 +2,26 @@ package mysql
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/pseudomuto/where"
 )
 
-// MySQLDriver implements the where.Driver interface for MySQL and MariaDB databases.
-type MySQLDriver struct {
-	keywords map[string]bool
+var supportedFeatures = []string{
+	"CTE",
+	"FULLTEXT",
+	"JSON",
+	"PARTITION",
+	"SPATIAL",
 }
+
+type (
+	// MySQLDriver implements the where.Driver interface for MySQL and MariaDB databases.
+	MySQLDriver struct {
+		keywords map[string]bool
+	}
+)
 
 // NewMySQLDriver creates a new MySQL driver instance.
 //
@@ -60,35 +71,10 @@ func (d *MySQLDriver) QuoteIdentifier(name string) string {
 }
 
 func (d *MySQLDriver) quoteSimpleIdentifier(name string) string {
-	if d.needsQuoting(name) {
+	if where.NeedsQuoting(name, d) {
 		return fmt.Sprintf("`%s`", strings.ReplaceAll(name, "`", "``"))
 	}
 	return name
-}
-
-func (d *MySQLDriver) needsQuoting(name string) bool {
-	if d.IsReservedKeyword(name) {
-		return true
-	}
-
-	if name == "" {
-		return false
-	}
-
-	if name[0] >= '0' && name[0] <= '9' {
-		return true
-	}
-
-	for _, ch := range name {
-		if (ch < 'a' || ch > 'z') &&
-			(ch < 'A' || ch > 'Z') &&
-			(ch < '0' || ch > '9') &&
-			ch != '_' {
-			return true
-		}
-	}
-
-	return false
 }
 
 func (d *MySQLDriver) Placeholder(position int) string {
@@ -122,14 +108,7 @@ func (d *MySQLDriver) TranslateOperator(op string) (string, bool) {
 }
 
 func (d *MySQLDriver) SupportsFeature(feature string) bool {
-	switch strings.ToUpper(feature) {
-	case "JSON", "FULLTEXT", "SPATIAL", "PARTITION", "CTE":
-		return true
-	case "ILIKE":
-		return false
-	default:
-		return false
-	}
+	return slices.Contains(supportedFeatures, strings.ToUpper(feature))
 }
 
 func init() {

@@ -2,15 +2,28 @@ package postgres
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/pseudomuto/where"
 )
 
-// PostgreSQLDriver implements the where.Driver interface for PostgreSQL databases.
-type PostgreSQLDriver struct {
-	keywords map[string]bool
+var supportedFeatures = []string{
+	"ARRAY",
+	"CTE",
+	"ILIKE",
+	"JSON",
+	"JSONB",
+	"RETURNING",
+	"WINDOW",
 }
+
+type (
+	// PostgreSQLDriver implements the where.Driver interface for PostgreSQL databases.
+	PostgreSQLDriver struct {
+		keywords map[string]bool
+	}
+)
 
 // NewPostgreSQLDriver creates a new PostgreSQL driver instance.
 //
@@ -60,35 +73,10 @@ func (d *PostgreSQLDriver) QuoteIdentifier(name string) string {
 }
 
 func (d *PostgreSQLDriver) quoteSimpleIdentifier(name string) string {
-	if d.needsQuoting(name) {
+	if where.NeedsQuoting(name, d) {
 		return fmt.Sprintf(`"%s"`, strings.ReplaceAll(name, `"`, `""`))
 	}
 	return name
-}
-
-func (d *PostgreSQLDriver) needsQuoting(name string) bool {
-	if d.IsReservedKeyword(name) {
-		return true
-	}
-
-	if name == "" {
-		return false
-	}
-
-	if name[0] >= '0' && name[0] <= '9' {
-		return true
-	}
-
-	for _, ch := range name {
-		if (ch < 'a' || ch > 'z') &&
-			(ch < 'A' || ch > 'Z') &&
-			(ch < '0' || ch > '9') &&
-			ch != '_' {
-			return true
-		}
-	}
-
-	return false
 }
 
 func (d *PostgreSQLDriver) Placeholder(position int) string {
@@ -118,12 +106,7 @@ func (d *PostgreSQLDriver) TranslateOperator(op string) (string, bool) {
 }
 
 func (d *PostgreSQLDriver) SupportsFeature(feature string) bool {
-	switch strings.ToUpper(feature) {
-	case "ILIKE", "ARRAY", "JSON", "JSONB", "RETURNING", "CTE", "WINDOW":
-		return true
-	default:
-		return false
-	}
+	return slices.Contains(supportedFeatures, strings.ToUpper(feature))
 }
 
 func init() {
